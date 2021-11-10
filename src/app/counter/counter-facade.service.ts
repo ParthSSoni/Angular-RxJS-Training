@@ -1,5 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { combineLatest, merge, NEVER, Observable, Subject, timer } from 'rxjs';
+import {
+  combineLatest,
+  merge,
+  NEVER,
+  Observable,
+  pipe,
+  Subject,
+  timer,
+} from 'rxjs';
 import {
   map,
   mapTo,
@@ -39,6 +47,7 @@ export class CounterFacadeService implements OnDestroy {
   inputSetTo: Subject<any> = new Subject<any>();
   inputTickSpeed: Subject<Event> = new Subject<Event>();
   inputCountDiff: Subject<Event> = new Subject<Event>();
+  btnReset: Subject<Event> = new Subject<Event>();
 
   lastSetToFromButtonClick = this.btnSetTo.pipe(
     withLatestFrom(
@@ -57,13 +66,14 @@ export class CounterFacadeService implements OnDestroy {
     this.lastSetToFromButtonClick.pipe(map((n) => ({ count: n }))),
     this.btnUp.pipe(mapTo({ countUp: true })),
     this.btnDown.pipe(mapTo({ countUp: false })),
+    this.btnReset.pipe(mapTo({ ...this.initialCounterState })),
     this.inputTickSpeed.pipe(
       inputToValue(),
       map((n) => ({ tickSpeed: n }))
     ),
     this.inputCountDiff.pipe(
       inputToValue(),
-      map((n)=>({countDiff: n}))
+      map((n) => ({ countDiff: n }))
     ),
     this.programmaticCommandSubject.asObservable()
   );
