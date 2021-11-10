@@ -13,7 +13,6 @@ import {
 } from 'rxjs/operators';
 import { CounterStateKeys } from '../counter-state-keys.enum';
 import { CounterState } from '../counter-state.interface';
-import { INITIAL_COUNTER_STATE } from '../initial-counter-state';
 import { inputToValue } from '../operators/inputToValue';
 import { selectDistinctState } from '../operators/selectDistinctState';
 import { Command } from './command.interface';
@@ -23,7 +22,13 @@ import { Command } from './command.interface';
 })
 export class CounterFacadeService implements OnDestroy {
   // = CONSTANTS ============================================================
-  initialCounterState: CounterState = INITIAL_COUNTER_STATE;
+  initialCounterState: CounterState = {
+    isTicking: false,
+    count: 0,
+    countUp: true,
+    tickSpeed: 200,
+    countDiff: 1,
+  };
   ngOnDestroySubject = new Subject();
 
   // = BASE OBSERVABLES  ====================================================
