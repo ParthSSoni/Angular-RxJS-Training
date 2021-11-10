@@ -21,7 +21,6 @@ import { Command } from './command.interface';
   providedIn: 'root',
 })
 export class CounterFacadeService implements OnDestroy {
-  // = CONSTANTS ============================================================
   initialCounterState: CounterState = {
     isTicking: false,
     count: 0,
@@ -31,8 +30,6 @@ export class CounterFacadeService implements OnDestroy {
   };
   ngOnDestroySubject = new Subject();
 
-  // = BASE OBSERVABLES  ====================================================
-  // == SOURCE OBSERVABLES ==================================================
   // === INTERACTION OBSERVABLES ============================================
   btnStart: Subject<Event> = new Subject<Event>();
   btnPause: Subject<Event> = new Subject<Event>();
@@ -41,6 +38,7 @@ export class CounterFacadeService implements OnDestroy {
   btnSetTo: Subject<Event> = new Subject<Event>();
   inputSetTo: Subject<any> = new Subject<any>();
   inputTickSpeed: Subject<Event> = new Subject<Event>();
+  inputCountDiff: Subject<Event> = new Subject<Event>();
 
   lastSetToFromButtonClick = this.btnSetTo.pipe(
     withLatestFrom(
@@ -63,6 +61,10 @@ export class CounterFacadeService implements OnDestroy {
       inputToValue(),
       map((n) => ({ tickSpeed: n }))
     ),
+    this.inputCountDiff.pipe(
+      inputToValue(),
+      map((n)=>({countDiff: n}))
+    ),
     this.programmaticCommandSubject.asObservable()
   );
   counterState: Observable<CounterState> = this.counterCommands.pipe(
@@ -76,8 +78,6 @@ export class CounterFacadeService implements OnDestroy {
     shareReplay(1)
   );
 
-  // == INTERMEDIATE OBSERVABLES ============================================
-
   // = SIDE EFFECTS =========================================================
   isTicking = this.counterState.pipe(
     selectDistinctState<CounterState, boolean>(CounterStateKeys.isTicking)
@@ -85,14 +85,12 @@ export class CounterFacadeService implements OnDestroy {
   tickSpeed = this.counterState.pipe(
     selectDistinctState<CounterState, boolean>(CounterStateKeys.tickSpeed)
   );
-
   intervalTick$ = combineLatest(this.isTicking, this.tickSpeed).pipe(
     switchMap(([isTicking, tickSpeed]) => {
       return isTicking ? timer(0, tickSpeed) : NEVER;
     })
   );
 
-  // = SIDE EFFECTS =========================================================
   // == BACKGROUND PROCESSES
   updateCounterFromTick = this.intervalTick$.pipe(
     withLatestFrom(this.counterState, (_, s) => s),
@@ -102,8 +100,8 @@ export class CounterFacadeService implements OnDestroy {
     })
   );
 
+  // = SUBSCRIPTION =========================================================
   constructor() {
-    // = SUBSCRIPTION =========================================================
     merge(this.updateCounterFromTick)
       .pipe(takeUntil(this.ngOnDestroySubject.asObservable()))
       .subscribe();
