@@ -1,13 +1,13 @@
 <app-counter-view
-  [state]="facade.counterState | async"
-  (btnStart)="facade.btnStart.next($event)"
-  (btnPause)="facade.btnPause.next($event)"
-  (btnSetTo)="facade.btnSetTo.next($event)"
-  (inputSetTo)="facade.inputSetTo.next($event)"
-  (btnUp)="facade.btnUp.next($event)"
-  (btnDown)="facade.btnDown.next($event)"
-  (inputTickSpeed)="facade.inputTickSpeed.next($event)"
-  (inputCountDiff)="facade.inputCountDiff.next($event)"
-  (btnReset)="facade.btnReset.next($event)"
+  [state]="counterState | async"
+  (btnStart)="btnStart.next($event)"
+  (btnPause)="btnPause.next($event)"
+  (btnSetTo)="btnSetTo.next($event)"
+  (inputSetTo)="inputSetTo.next($event)"
+  (btnUp)="btnUp.next($event)"
+  (btnDown)="btnDown.next($event)"
+  (inputTickSpeed)="inputTickSpeed.next($event)"
+  (inputCountDiff)="inputCountDiff.next($event)"
+  (btnReset)="btnReset.next($event)"
 >
 </app-counter-view>
